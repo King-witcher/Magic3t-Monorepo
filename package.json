@@ -1,0 +1,14 @@
+{
+  "workspaces": {
+    "packages": [
+      "packages/*"
+    ]
+  },
+  "scripts": {
+    "start": "yarn workspace backend build && start /B yarn workspace backend start & yarn workspace frontend start"
+  },
+  "name": "magic3t",
+  "version": "1.0.0",
+  "license": "MIT",
+  "private": true
+}
