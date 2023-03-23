@@ -1,10 +1,7 @@
 {
   "name": "frontend",
   "version": "1.0.0",
-  "repository": "https://github.com/King-witcher/Magic3t-Frontend.git",
-  "author": "Giuseppe Lanna <49965024+King-witcher@users.noreply.github.com>",
-  "license": "MIT",
-  "private": false,
+  "private": true,
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
