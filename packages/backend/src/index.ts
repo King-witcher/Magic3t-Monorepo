@@ -12,8 +12,6 @@ import cookieParser from 'cookie-parser'
 const port = process.env.PORT || 3000
 main()
 
-export const a = 3
-
 async function main() {
     Express()
         .use(Express.json({limit: '1000kb'}))

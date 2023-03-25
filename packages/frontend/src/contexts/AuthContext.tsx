@@ -1,3 +1,4 @@
+import { LoginRequest } from '@magic3t/backend'
 import { createContext, ReactNode, useContext, useEffect, useState } from 'react'
 import * as SessionService from '../services/sessionService'
 
@@ -6,36 +7,44 @@ interface IProps {
   children: ReactNode
 }
 
-interface ILoginParams {
-  username: string
-  password: string
-}
-
 interface UserData {
   nickname: string
 }
 
+export type SessionData = {
+  token: null
+  isAuthenticated: false
+} | {
+  token: string
+  isAuthenticated: true
+  userData: UserData
+}
+
 interface ISessionContextData {
-  login(params: ILoginParams): Promise<void>
+  login(params: LoginRequest): Promise<void>
   logout(): Promise<void>
-  isLogged: boolean
+  session: SessionData
   isLoading: boolean
   error: string | null
-  userData: UserData | null
+}
+
+const initialSessionData: SessionData = {
+  token: null,
+  isAuthenticated: false
 }
 
 const SessionContext = createContext<ISessionContextData>({} as ISessionContextData)
 
 export const SessionContextProvider = ({ children }: IProps) => {
 
-  const [isLogged, setIsLogged] = useState(false)
-  const [token, setToken] = useState<string | null>(localStorage.getItem('token'))
-  const [userData, setUserData] = useState<UserData | null>(null)
-  const [isLoading, setIsLoading] = useState(false)
+  const [session, setSession] = useState<SessionData>(initialSessionData)
+  const [isLoading, setIsLoading] = useState(true)
+  const [isRequesting, setIsRequesting] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
   // Verifica a sessão relacionada ao token atual.
   useEffect(() => {
+    const token = localStorage.getItem('token')
     // Caso algum token esteja armazenado em localStorage
     if (token) {
       console.log(token)
@@ -46,52 +55,64 @@ export const SessionContextProvider = ({ children }: IProps) => {
           localStorage.removeItem('token')
         // Salva informações do usuário
         else {
-          setIsLogged(true)
-          setUserData({
-            nickname: response.userData.nickname
+          setSession({
+            isAuthenticated: true,
+            userData: response.userData,
+            token,
           })
         }
+
+        setIsLoading(false)
       })
     }
   }, [])
 
   // Sincroniza o token do localStorage com o estado
   useEffect(() => {
-    if (token)
-      localStorage.setItem('token', token)
+    if (session.token)
+      localStorage.setItem('token', session.token)
     else
       localStorage.removeItem('token')
-  }, [token])
+  }, [session.token])
 
-  async function login({ username, password }: ILoginParams) {
-    if (isLogged) {
-      return setError(`Mas vc ja ta logado como ${userData?.nickname} mano`)
+  async function login({ username, password }: LoginRequest) {
+    if (session.isAuthenticated) {
+      await logout()
     }
-
-    setIsLoading(true)
+    setIsRequesting(true)
     const dat = await SessionService.login({ username, password })
-    setIsLoading(false)
     if (dat.success) {
-      setIsLogged(true)
-      setToken(dat.token)
+      await fetchUserData(dat.token)
       setError(null)
-      updateUserData(dat.token)
     } else {
       setError('Não foi possível iniciar sessão.')
     }
+    setIsRequesting(false)
   }
 
-  async function updateUserData(token: string | undefined) {
+  async function fetchUserData(token: string | undefined) {
     if (!token) {
-      setUserData(null)
+      setSession({
+        isAuthenticated: false,
+        token: null,
+      })
     } else {
+      console.log(token)
+      
       const info = await SessionService.getSessionInfo(token)
       console.log(token)
       console.log(info)
       if (info.status === 'authenticated')
-        setUserData(info.userData)
+        setSession({
+          isAuthenticated: true,
+          token,
+          userData: info.userData,
+        })
       else
-        setUserData(null)
+        setSession({
+          isAuthenticated: false,
+          token: null,
+        })
     }
   }
 
@@ -100,7 +121,7 @@ export const SessionContextProvider = ({ children }: IProps) => {
   }
 
   return (
-    <SessionContext.Provider value={{ login, isLogged, logout, userData, isLoading, error }}>
+    <SessionContext.Provider value={{ login, logout, session, isLoading: isRequesting, error }}>
       {children}
     </SessionContext.Provider>
   )

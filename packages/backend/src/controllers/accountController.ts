@@ -1,13 +1,7 @@
 import { Request, Response } from 'express'
 import bcrypt from 'bcrypt'
 import { IUser, User } from '../models/User'
-
-interface CreationRequest {
-  username: string
-  nickname: string
-  password: string
-  email: string
-}
+import { AccountCreationRequest } from '../types/requests'
 
 export function createUser(username: string, email: string, nickname: string, password: string): IUser {
     return {
@@ -20,7 +14,7 @@ export function createUser(username: string, email: string, nickname: string, pa
     }
 }
 
-export async function create(req: Request<object, object, CreationRequest> , res: Response) {
+export async function create(req: Request<object, object, AccountCreationRequest> , res: Response) {
     try {
         const { username, nickname, password, email } = req.body
 

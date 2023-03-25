@@ -5,10 +5,9 @@
     ]
   },
   "scripts": {
-    "dev": "start /B yarn workspace backend dev & yarn workspace frontend start"
+    "start": "start yarn workspace @magic3t/backend dev & yarn workspace @magic3t/frontend start"
   },
   "name": "magic3t",
   "version": "1.0.0",
-  "license": "MIT",
   "private": true
 }

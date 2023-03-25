@@ -1,7 +1,9 @@
 {
-  "name": "backend",
+  "name": "@magic3t/backend",
   "version": "1.0.0",
   "private": true,
+  "files": ["src"],
+  "main": "src/types/exports",
   "scripts": {
     "build": "tsc",
     "start": "node build/index.js",

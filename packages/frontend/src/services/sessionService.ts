@@ -1,32 +1,11 @@
 import { get, post } from './server'
+import { LoginRequest, LoginResponse, SessionInfoResponse } from '@magic3t/backend'
 
-interface LoginParams {
-  username: string
-  password: string
-}
-
-type LoginResponse = {
-  success: true
-  token: string
-} | {
-  success: false
-}
-
-export async function login(params: LoginParams) {
+export async function login(params: LoginRequest) {
   return await post<LoginResponse>('/login', params)
 }
 
-type SessionInfo = {
-  status: 'authenticated'
-  userData: {
-    nickname: string
-  }
-} | {
-  status: 'unauthenticated'
-  userData: undefined
-}
-
-export async function getSessionInfo(token: string): Promise<SessionInfo> {
+export async function getSessionInfo(token: string): Promise<SessionInfoResponse> {
   console.log(token)
-  return await get<SessionInfo>(`/session?token=${token}`)
+  return await get<SessionInfoResponse>(`/session?token=${token}`)
 }

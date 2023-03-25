@@ -1,24 +1,16 @@
 import { Request, Response } from 'express'
 import { User } from '../models/User'
 import * as Sessions from '../states/sessions'
-
-interface LoginRequest {
-  username: string
-  password: string
-}
-
-interface LoginResponse {
-  success: boolean
-  message?: string
-  token?: string
-}
+import { LoginRequest } from '../types/requests'
+import { LoginResponse, SessionInfoResponse } from '../types/responses'
 
 export async function login(req: Request<object, object, LoginRequest>, res: Response<LoginResponse>) {
     // Usuário já logado
     if (req.auth?.authenticated)
         return res.status(400).send({
             success: false,
-            message: 'already authenticated'
+            message: 'already authenticated',
+            token: null,
         })
 
     const { username, password } = req.body
@@ -27,14 +19,16 @@ export async function login(req: Request<object, object, LoginRequest>, res: Res
     if(!username || !password)
         return res.status(400).send({
             success: false,
-            message: 'missing field'
+            message: 'missing field',
+            token: null,
         })
 
     const userQuery: User[] = await User.findByField('username', username)
     if (userQuery.length === 0)
         return res.status(400).send({
             success: false,
-            message: 'username not found'
+            message: 'username not found',
+            token: null,
         })
   
     const user = userQuery[0]
@@ -50,21 +44,15 @@ export async function login(req: Request<object, object, LoginRequest>, res: Res
 
     return res.status(403).send({
         success: false,
-        message: 'wrong password'
+        message: 'wrong password',
+        token: null,
     })
 }
 
-interface SessionInfo {
-    status: 'authenticated' | 'unauthenticated'
-    userData: {
-        nickname: string
-    } | null
-    message: string
-}
-
-export async function getSessionInfo(req: Request, res: Response<SessionInfo>) {
+export async function getSessionInfo(req: Request, res: Response<SessionInfoResponse>) {
     // Verifica a existência de um header de autorização
-    const token = req.headers.authorization
+    console.log('token', req.query.token)
+    const token = req.query.token as string
     if (!token) {
         return res.send({
             status: 'unauthenticated',

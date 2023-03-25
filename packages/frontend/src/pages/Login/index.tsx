@@ -7,7 +7,7 @@ const LoginPage = () => {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
 
-  const { login, isLoading, error, isLogged, userData } = useSessionContext()
+  const { login, isLoading, error, session } = useSessionContext()
 
   function handleUsernameChange(e: React.ChangeEvent<HTMLInputElement>) {
     setUsername(e.target.value)
@@ -24,24 +24,33 @@ const LoginPage = () => {
   }
 
   useEffect(() => {
-    if (userData)
-      alert(`Agora vc eh o ${userData?.nickname}`)
-  }, [isLogged])
+    if (session.isAuthenticated)
+      alert(`Agora vc eh o ${session.userData.nickname}`)
+  }, [session.isAuthenticated])
 
   return (<>
     <LoginContainer>
-      <Title>
-        Iniciar sessão
-      </Title>
-      <form action="" onSubmit={handleSubmit}>
-        <Input label='Nome de usuário' value={username} onChange={handleUsernameChange} disabled={isLoading} />
-        <Input label='Senha' value={password} onChange={handlePasswordChange} password disabled={isLoading} />
-        <ErrorLabel>{error}</ErrorLabel>
-        <input type="submit" value="Entrar" disabled={isLoading}/>
-      </form>
+      {session.isAuthenticated && (!session.isAuthenticated
+        ? <>
+          <Title>
+          Iniciar sessão
+          </Title>
+          <form action="" onSubmit={handleSubmit}>
+            <Input label='Nome de usuário' value={username} onChange={handleUsernameChange} disabled={isLoading} />
+            <Input label='Senha' value={password} onChange={handlePasswordChange} password disabled={isLoading} />
+            <ErrorLabel>{error}</ErrorLabel>
+            <input type="submit" value="Entrar" disabled={isLoading} />
+          </form>
+        </>
+        : <>
+          <Title>
+            Olá, {session.userData.nickname}!
+          </Title>
+          Esta página ainda não faz nada, apenas mostra que você está logado. Boa sorte tentando se deslogar agora.
+        </>
+      )}
     </LoginContainer>
   </>
-  )
-}
+  )}
  
 export default LoginPage
