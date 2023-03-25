@@ -26,8 +26,6 @@ const LoginPage = () => {
     setBlockFields(false)
   }
 
-  console.log(isLoading, session)
-
   if (isLoading) return null
 
   return (
