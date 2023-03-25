@@ -39,7 +39,6 @@ export const SessionContextProvider = ({ children }: IProps) => {
 
   const [session, setSession] = useState<SessionData>(initialSessionData)
   const [isLoading, setIsLoading] = useState(true)
-  const [isRequesting, setIsRequesting] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
   // Verifica a sessão relacionada ao token atual.
@@ -79,7 +78,6 @@ export const SessionContextProvider = ({ children }: IProps) => {
     if (session.isAuthenticated) {
       await logout()
     }
-    setIsRequesting(true)
     const dat = await SessionService.login({ username, password })
     if (dat.success) {
       await fetchUserData(dat.token)
@@ -87,7 +85,6 @@ export const SessionContextProvider = ({ children }: IProps) => {
     } else {
       setError('Não foi possível iniciar sessão.')
     }
-    setIsRequesting(false)
   }
 
   async function fetchUserData(token: string | undefined) {
@@ -121,7 +118,7 @@ export const SessionContextProvider = ({ children }: IProps) => {
   }
 
   return (
-    <SessionContext.Provider value={{ login, logout, session, isLoading: isRequesting, error }}>
+    <SessionContext.Provider value={{ login, logout, session, isLoading, error }}>
       {children}
     </SessionContext.Provider>
   )
