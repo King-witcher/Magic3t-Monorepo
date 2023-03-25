@@ -63,6 +63,8 @@ export const SessionContextProvider = ({ children }: IProps) => {
 
         setIsLoading(false)
       })
+    } else {
+      setIsLoading(false)
     }
   }, [])
 
