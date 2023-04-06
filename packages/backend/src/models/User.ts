@@ -20,7 +20,7 @@ export class User extends Model<IUser> {
             dataVersion: 1,
             username,
             email,
-            passwordDigest: '',
+            passwordDigest: ''
             nickname,
             rating: 0
         }

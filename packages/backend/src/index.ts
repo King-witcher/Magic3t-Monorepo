@@ -13,14 +13,14 @@ const port = process.env.PORT || 3000
 main()
 
 async function main() {
-    Express()
-        .use(Express.json({limit: '1000kb'}))
-        .use(Express.urlencoded())
-        .use(cookieParser())
-        .use(cors())
-        .use(morgan('dev'))
-        .use(auth)
-        .use(Routes)
+  Express()
+    .use(Express.json({limit: '1000kb'}))
+    .use(Express.urlencoded())
+    .use(cookieParser())
+    .use(cors())
+    .use(morgan('dev'))
+    .use(auth)
+    .use(Routes)
   
-        .listen(port, () => {console.log(`Server started on port ${port}.`)})
+    .listen(port, () => {console.log(`Server started on port ${port}.`)})
 }

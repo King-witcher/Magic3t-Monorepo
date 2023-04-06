@@ -6,7 +6,8 @@
   },
   "scripts": {
     "start": "start yarn workspace @magic3t/backend dev & yarn workspace @magic3t/frontend start",
-    "lint": "yarn workspace @magic3t/frontend lint --fix & yarn workspace @magic3t/backend lint --fix"
+    "lint": "yarn workspace @magic3t/frontend lint --fix & yarn workspace @magic3t/backend lint --fix",
+    "nest": "yarn workspace @magic3t/nest nest"
   },
   "name": "magic3t",
   "version": "1.0.0",
