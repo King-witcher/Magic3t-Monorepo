@@ -3,7 +3,7 @@ import Input from '../../components/Input'
 import { useSessionContext } from '../../contexts/AuthContext'
 import { ErrorLabel, LoginContainer, Title } from './styles'
 
-const LoginPage = () => {
+const SignInPage = () => {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [blockFields, setBlockFields] = useState(false)
@@ -52,4 +52,4 @@ const LoginPage = () => {
     </LoginContainer>
   )}
  
-export default LoginPage
+export default SignInPage

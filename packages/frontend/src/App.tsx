@@ -1,12 +1,12 @@
 import { SessionContextProvider } from './contexts/AuthContext'
 import GlobalStyles from './GlobalStyles'
-import LoginPage from './pages/Login'
+import SignInPage from './pages/SignIn'
 
 function App() {
   return (
     <SessionContextProvider>
       <GlobalStyles />
-      <LoginPage />
+      <SignInPage />
     </SessionContextProvider>
   )
 }
