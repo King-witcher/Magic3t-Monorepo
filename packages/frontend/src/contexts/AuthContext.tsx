@@ -1,6 +1,7 @@
 import { LoginRequest } from '@magic3t/backend'
 import { createContext, ReactNode, useContext, useEffect, useState } from 'react'
-import * as SessionService from '../services/sessionService'
+import { get, post } from '../services/server'
+import { SessionService } from '../services/SessionService'
 
 
 interface IProps {
@@ -9,6 +10,7 @@ interface IProps {
 
 interface UserData {
   nickname: string
+  rating: number
 }
 
 export type SessionData = {
@@ -17,7 +19,7 @@ export type SessionData = {
 } | {
   token: string
   isAuthenticated: true
-  userData: UserData
+  sessionData: UserData
 }
 
 interface ISessionContextData {
@@ -48,15 +50,18 @@ export const SessionContextProvider = ({ children }: IProps) => {
     if (token) {
       console.log(token)
       // Verifica se o mesmo ainda é válido
-      SessionService.getSessionInfo(token).then(response => {
+      SessionService.getSession(token).then(response => {
         // Deleta o token caso não seja mais válido
-        if (response.status === 'unauthenticated')
+        if (response.status === 404)
           localStorage.removeItem('token')
         // Salva informações do usuário
         else {
           setSession({
             isAuthenticated: true,
-            userData: response.userData,
+            sessionData: {
+              nickname: response.data.nickname,
+              rating: response.data.rating
+            },
             token,
           })
         }
@@ -80,9 +85,9 @@ export const SessionContextProvider = ({ children }: IProps) => {
     if (session.isAuthenticated) {
       await logout()
     }
-    const dat = await SessionService.login({ username, password })
-    if (dat.success) {
-      await fetchUserData(dat.token)
+    const response = await SessionService.signIn(username, password)
+    if (200 <= response.status && response.status < 300) {
+      await fetchUserData(response.data.token)
       setError(null)
     } else {
       setError('Não foi possível iniciar sessão.')
@@ -98,14 +103,12 @@ export const SessionContextProvider = ({ children }: IProps) => {
     } else {
       console.log(token)
       
-      const info = await SessionService.getSessionInfo(token)
-      console.log(token)
-      console.log(info)
-      if (info.status === 'authenticated')
+      const info = await SessionService.getSession(token)
+      if (info.status === 200)
         setSession({
           isAuthenticated: true,
           token,
-          userData: info.userData,
+          sessionData: info.data,
         })
       else
         setSession({

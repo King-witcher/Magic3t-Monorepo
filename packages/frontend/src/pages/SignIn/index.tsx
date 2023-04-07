@@ -44,7 +44,7 @@ const LoginPage = () => {
         </>
         : <>
           <Title>
-            Olá, {session.userData.nickname}!
+            Olá, {session.sessionData.nickname}!
           </Title>
           Esta página ainda não faz nada, apenas mostra que você está logado. Boa sorte tentando se deslogar agora.
         </>

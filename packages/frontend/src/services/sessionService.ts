@@ -1,15 +1,15 @@
 import { get, post } from './server'
-import { SessionInfoResponse } from '@magic3t/backend'
-import { SessionController } from '@magic3t/nest/src/controllers/session/session.controller'
 
-type LoginResponse = ReturnType<SessionController['login']>
-type LoginRequest = Parameters<SessionController['login']>[0]
+class SessionServiceClass {
+  async signIn(username: string, password: string) {
+    return await post('/session', {
+      username, password
+    })
+  }
 
-export async function login(params: LoginRequest) {
-  return await post<LoginResponse>('/login', params)
+  async getSession(token: string) {
+    return await get(`/session/${token}`)
+  }
 }
 
-export async function getSessionInfo(token: string): Promise<SessionInfoResponse> {
-  console.log(token)
-  return await get<SessionInfoResponse>(`/session?token=${token}`)
-}
+export const SessionService = new SessionServiceClass()
